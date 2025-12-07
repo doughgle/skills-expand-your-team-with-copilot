@@ -581,6 +581,20 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="social-share-buttons">
+        <button class="share-button share-twitter" data-activity="${name}" title="Share on X">
+          <span class="share-icon">❌</span>
+        </button>
+        <button class="share-button share-facebook" data-activity="${name}" title="Share on Facebook">
+          <span class="share-icon">👍</span>
+        </button>
+        <button class="share-button share-tiktok" data-activity="${name}" title="Share on TikTok">
+          <span class="share-icon">🎵</span>
+        </button>
+        <button class="share-button share-email" data-activity="${name}" title="Share via Email">
+          <span class="share-icon">✉️</span>
+        </button>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -606,6 +620,24 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", handleUnregister);
     });
 
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const activityName = event.currentTarget.dataset.activity;
+        const activityDetails = allActivities[activityName];
+        if (button.classList.contains("share-twitter")) {
+          shareOnTwitter(activityName, activityDetails);
+        } else if (button.classList.contains("share-facebook")) {
+          shareOnFacebook(activityName, activityDetails);
+        } else if (button.classList.contains("share-tiktok")) {
+          shareOnTikTok(activityName, activityDetails);
+        } else if (button.classList.contains("share-email")) {
+          shareViaEmail(activityName, activityDetails);
+        }
+      });
+    });
+
     // Add click handler for register button (only when authenticated)
     if (currentUser) {
       const registerButton = activityCard.querySelector(".register-button");
@@ -617,6 +649,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  // Social sharing functions
+  function shareOnTwitter(activityName, activityDetails) {
+    const url = window.location.href;
+    // Twitter has a 280-character limit. Truncate description if needed.
+    let text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const maxLength = 280 - url.length - 1; // Reserve space for URL
+    if (text.length > maxLength) {
+      text = text.substring(0, maxLength - 3) + '...';
+    }
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareOnFacebook(activityName, activityDetails) {
+    const url = window.location.href;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareOnTikTok(activityName, activityDetails) {
+    const url = window.location.href;
+    const text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const tiktokUrl = `https://www.tiktok.com/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`;
+    window.open(tiktokUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareViaEmail(activityName, activityDetails) {
+    const subject = `Check out ${activityName} at Mergington High School`;
+    const schedule = formatSchedule(activityDetails);
+    const spotsAvailable = activityDetails.max_participants - activityDetails.participants.length;
+    
+    const body = [
+      'Hi!',
+      '',
+      'I wanted to share this activity with you:',
+      '',
+      activityName,
+      activityDetails.description,
+      '',
+      `Schedule: ${schedule}`,
+      `Spots available: ${spotsAvailable} of ${activityDetails.max_participants}`,
+      '',
+      `Check it out at: ${window.location.href}`
+    ].join('\n');
+    
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
   }
 
   // Event listeners for search and filter
