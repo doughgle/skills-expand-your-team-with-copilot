@@ -38,9 +38,10 @@ def init_database():
             
     # Add new teacher accounts without overwriting existing ones
     for teacher in initial_teachers:
+        teacher_data = {k: v for k, v in teacher.items() if k != "username"}
         teachers_collection.update_one(
             {"_id": teacher["username"]},
-            {"$setOnInsert": teacher},
+            {"$setOnInsert": teacher_data},
             upsert=True
         )
 
