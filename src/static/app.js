@@ -552,6 +552,17 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="social-share-buttons">
+        <button class="share-button share-twitter" data-activity="${name}" title="Share on Twitter">
+          <span class="share-icon">🐦</span>
+        </button>
+        <button class="share-button share-facebook" data-activity="${name}" title="Share on Facebook">
+          <span class="share-icon">👍</span>
+        </button>
+        <button class="share-button share-email" data-activity="${name}" title="Share via Email">
+          <span class="share-icon">✉️</span>
+        </button>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -577,6 +588,22 @@ document.addEventListener("DOMContentLoaded", () => {
       button.addEventListener("click", handleUnregister);
     });
 
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const activityName = event.currentTarget.dataset.activity;
+        const activityDetails = allActivities[activityName];
+        if (button.classList.contains("share-twitter")) {
+          shareOnTwitter(activityName, activityDetails);
+        } else if (button.classList.contains("share-facebook")) {
+          shareOnFacebook(activityName, activityDetails);
+        } else if (button.classList.contains("share-email")) {
+          shareViaEmail(activityName, activityDetails);
+        }
+      });
+    });
+
     // Add click handler for register button (only when authenticated)
     if (currentUser) {
       const registerButton = activityCard.querySelector(".register-button");
@@ -588,6 +615,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activitiesList.appendChild(activityCard);
+  }
+
+  // Social sharing functions
+  function shareOnTwitter(activityName, activityDetails) {
+    const url = window.location.href;
+    const text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareOnFacebook(activityName, activityDetails) {
+    const url = window.location.href;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareViaEmail(activityName, activityDetails) {
+    const subject = `Check out ${activityName} at Mergington High School`;
+    const schedule = formatSchedule(activityDetails);
+    const body = `Hi!\n\nI wanted to share this activity with you:\n\n${activityName}\n${activityDetails.description}\n\nSchedule: ${schedule}\nSpots available: ${activityDetails.max_participants - activityDetails.participants.length} of ${activityDetails.max_participants}\n\nCheck it out at: ${window.location.href}`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
   }
 
   // Event listeners for search and filter
