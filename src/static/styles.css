@@ -73,15 +73,16 @@ body.dark-mode {
   font-family: Arial, sans-serif;
 }
 
-/* Smooth color transitions for theme switching */
+/* Smooth color transitions for theme switching - applied to specific elements */
 body,
 header,
 section,
 .activity-card,
 .modal-content,
 .sidebar-filters,
-button,
-input,
+.category-filter,
+.day-filter,
+.time-filter,
 .search-box input,
 .search-box button {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
@@ -725,7 +726,7 @@ footer {
   padding: 8px 16px;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   display: flex;
   align-items: center;
   gap: 5px;
