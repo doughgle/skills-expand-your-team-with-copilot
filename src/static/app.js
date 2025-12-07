@@ -559,6 +559,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <button class="share-button share-facebook" data-activity="${name}" title="Share on Facebook">
           <span class="share-icon">👍</span>
         </button>
+        <button class="share-button share-tiktok" data-activity="${name}" title="Share on TikTok">
+          <span class="share-icon">🎵</span>
+        </button>
         <button class="share-button share-email" data-activity="${name}" title="Share via Email">
           <span class="share-icon">✉️</span>
         </button>
@@ -598,6 +601,8 @@ document.addEventListener("DOMContentLoaded", () => {
           shareOnTwitter(activityName, activityDetails);
         } else if (button.classList.contains("share-facebook")) {
           shareOnFacebook(activityName, activityDetails);
+        } else if (button.classList.contains("share-tiktok")) {
+          shareOnTikTok(activityName, activityDetails);
         } else if (button.classList.contains("share-email")) {
           shareViaEmail(activityName, activityDetails);
         }
@@ -634,6 +639,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const url = window.location.href;
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
     window.open(facebookUrl, '_blank', 'width=550,height=420');
+  }
+
+  function shareOnTikTok(activityName, activityDetails) {
+    const url = window.location.href;
+    const text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const tiktokUrl = `https://www.tiktok.com/share?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`;
+    window.open(tiktokUrl, '_blank', 'width=550,height=420');
   }
 
   function shareViaEmail(activityName, activityDetails) {
