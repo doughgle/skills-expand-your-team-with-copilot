@@ -1,4 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Theme toggle functionality
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = document.getElementById("theme-icon");
+  
+  // Check for saved theme preference or default to light mode
+  const currentTheme = localStorage.getItem("theme") || "light";
+  if (currentTheme === "dark") {
+    document.body.classList.add("dark-mode");
+    themeIcon.textContent = "☀️";
+  }
+
+  // Toggle theme function
+  function toggleTheme() {
+    document.body.classList.toggle("dark-mode");
+    const isDarkMode = document.body.classList.contains("dark-mode");
+    
+    // Update icon
+    themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+    
+    // Save preference
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }
+
+  // Add click event listener to theme toggle button
+  themeToggle.addEventListener("click", toggleTheme);
+
   // DOM elements
   const activitiesList = document.getElementById("activities-list");
   const messageDiv = document.getElementById("message");
@@ -161,8 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateAuthBodyClass() {
     if (currentUser) {
       document.body.classList.remove("not-authenticated");
+      document.body.classList.add("authenticated");
     } else {
       document.body.classList.add("not-authenticated");
+      document.body.classList.remove("authenticated");
     }
   }
 
