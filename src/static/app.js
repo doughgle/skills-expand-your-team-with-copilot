@@ -553,8 +553,8 @@ document.addEventListener("DOMContentLoaded", () => {
         </ul>
       </div>
       <div class="social-share-buttons">
-        <button class="share-button share-twitter" data-activity="${name}" title="Share on Twitter">
-          <span class="share-icon">🐦</span>
+        <button class="share-button share-twitter" data-activity="${name}" title="Share on X">
+          <span class="share-icon">❌</span>
         </button>
         <button class="share-button share-facebook" data-activity="${name}" title="Share on Facebook">
           <span class="share-icon">👍</span>
