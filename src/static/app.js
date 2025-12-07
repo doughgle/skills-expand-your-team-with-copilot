@@ -620,7 +620,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Social sharing functions
   function shareOnTwitter(activityName, activityDetails) {
     const url = window.location.href;
-    const text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    // Twitter has a 280-character limit. Truncate description if needed.
+    let text = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const maxLength = 280 - url.length - 1; // Reserve space for URL
+    if (text.length > maxLength) {
+      text = text.substring(0, maxLength - 3) + '...';
+    }
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(twitterUrl, '_blank', 'width=550,height=420');
   }
@@ -634,7 +639,22 @@ document.addEventListener("DOMContentLoaded", () => {
   function shareViaEmail(activityName, activityDetails) {
     const subject = `Check out ${activityName} at Mergington High School`;
     const schedule = formatSchedule(activityDetails);
-    const body = `Hi!\n\nI wanted to share this activity with you:\n\n${activityName}\n${activityDetails.description}\n\nSchedule: ${schedule}\nSpots available: ${activityDetails.max_participants - activityDetails.participants.length} of ${activityDetails.max_participants}\n\nCheck it out at: ${window.location.href}`;
+    const spotsAvailable = activityDetails.max_participants - activityDetails.participants.length;
+    
+    const body = [
+      'Hi!',
+      '',
+      'I wanted to share this activity with you:',
+      '',
+      activityName,
+      activityDetails.description,
+      '',
+      `Schedule: ${schedule}`,
+      `Spots available: ${spotsAvailable} of ${activityDetails.max_participants}`,
+      '',
+      `Check it out at: ${window.location.href}`
+    ].join('\n');
+    
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
   }
