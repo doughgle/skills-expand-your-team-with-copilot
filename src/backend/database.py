@@ -18,17 +18,32 @@ def hash_password(password):
     return ph.hash(password)
 
 def init_database():
-    """Initialize database if empty"""
+    """Initialize database with default activities and teachers"""
 
-    # Initialize activities if empty
-    if activities_collection.count_documents({}) == 0:
-        for name, details in initial_activities.items():
+    # Add new activities without overwriting participant data
+    for name, details in initial_activities.items():
+        # Check if activity exists
+        existing = activities_collection.find_one({"_id": name})
+        if not existing:
+            # New activity - insert with all details
             activities_collection.insert_one({"_id": name, **details})
+        else:
+            # Existing activity - only update non-participant fields
+            update_fields = {k: v for k, v in details.items() if k != "participants"}
+            if update_fields:
+                activities_collection.update_one(
+                    {"_id": name},
+                    {"$set": update_fields}
+                )
             
-    # Initialize teacher accounts if empty
-    if teachers_collection.count_documents({}) == 0:
-        for teacher in initial_teachers:
-            teachers_collection.insert_one({"_id": teacher["username"], **teacher})
+    # Add new teacher accounts without overwriting existing ones
+    for teacher in initial_teachers:
+        teacher_data = {k: v for k, v in teacher.items() if k != "username"}
+        teachers_collection.update_one(
+            {"_id": teacher["username"]},
+            {"$setOnInsert": teacher_data},
+            upsert=True
+        )
 
 # Initial database if empty
 initial_activities = {
